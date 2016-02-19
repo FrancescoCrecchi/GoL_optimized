@@ -18,6 +18,10 @@ void serial_task(Board* board, int numIterations) {
 
 	for (int l = 0; l != numIterations; ++l) {
 
+		#if PRINT
+			board->print_board(in);
+		#endif
+
 		for (int i = 1; i < h - 1; ++i) { //going through the rows
 
 			int sc = i * w + 1; 	//current row cell
@@ -83,6 +87,10 @@ void ff_task(Board* board, int numIterations, int nW) {
 
 	for (int l = 0; l < numIterations; ++l) {
 
+		#if PRINT
+			board->print_board(in);
+		#endif
+
 		pf.parallel_for((long int)1, (long int) h - 1,[&](const long i) {
 
 			int sc = i * w + 1;
@@ -126,9 +134,13 @@ void ff_task(Board* board, int numIterations, int nW) {
 
     	}, (long int) nW);
 
-		board->read = in;
-		board->write = out;
+		Board::CELL_TYPE *tmp = in;
+		in = out;
+		out = tmp;
 	}
+	
+	board->read = in;
+	board->write = out;
 }
 
 #endif //GAMEOFLIFE_TASK_H

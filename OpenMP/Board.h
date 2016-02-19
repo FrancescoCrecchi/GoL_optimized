@@ -26,6 +26,7 @@ public:
     void swap();
     void fixBorders(CELL_TYPE *cells);
 
+    void print_board(Board::CELL_TYPE *board);
 };
 
 

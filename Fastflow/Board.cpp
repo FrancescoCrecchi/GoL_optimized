@@ -35,6 +35,7 @@ void Board::initialize_board(bool initRandom) {
         }
     }
 	fixBorders(write);
+    swap();
 }
 
 inline int Board::get_cell(int c) {
@@ -80,4 +81,20 @@ void Board::fixBorders(CELL_TYPE *cells) {
 
 void Board::swap() {
     std::swap(read, write);
+}
+
+
+void Board::print_board(Board::CELL_TYPE *board) {
+    for (int i = 1; i < rows - 1 ; ++i) {
+        for (int j = 1; j < cols - 1 ; ++j) {
+            if(board[i* cols + j] == 0)
+                cout << ".";
+            else
+                cout << "0";
+        }
+        cout << endl;
+    }
+    cout << endl;
+    // sleep(1); //sleep 1 sec
+    // int res = system("clear");    //clear the console in UNIX systems
 }
