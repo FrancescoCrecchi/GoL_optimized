@@ -5,11 +5,8 @@
 #ifndef GAMEOFLIFE_TASK_H
 #define GAMEOFLIFE_TASK_H
 
-#include "Board.h"
+#include "../Board.h"
 #include "spinning_barrier.h"
-
-//Control flow variable
-bool multithread = false;
 
 void plain_task(Board* board, int start, int stop, int numIterations, spinning_barrier* barrier) {
 
@@ -25,10 +22,9 @@ void plain_task(Board* board, int start, int stop, int numIterations, spinning_b
 			int sn = sc - w; 		//previous row cell
 			int ss = sc + w;		//next row cell
 
-#if VECT
+
 			#pragma simd //enforces loop vectorization
 			#pragma vector nontemporal //because the compiler do not vectorize nested loops
-#endif
 			for (int j = 1; j < w - 1; ++j) {
 
 				int count = in[sn - 1] +
@@ -55,31 +51,21 @@ void plain_task(Board* board, int start, int stop, int numIterations, spinning_b
 				Board::CELL_TYPE *rowSrc = out + w * i;
 				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
 
-#if VECT
 				#pragma simd
 				#pragma vector nontemporal
-#endif
 				for (int i = w; i != 0; --i) {
 					*rDst++ = *rowSrc++;
 				}
 			}
 
 		}
-
-		if(multithread) {
-			//Barrier here
-			barrier->wait([&](){
-#if PRINT
-				board->print_board(out);
-#endif
-			});
-		}
-		else
-		{
+		
+		//Barrier here
+		barrier->wait([&](){
 #if PRINT
 			board->print_board(out);
 #endif
-		}
+		});
 
 		Board::CELL_TYPE *tmp = in;
 		in = out;
@@ -89,73 +75,5 @@ void plain_task(Board* board, int start, int stop, int numIterations, spinning_b
 	board->read = in;
 	board->write = out;
 }
-
-
-// void plain_task_vect(Board* board, int numIterations, int nW) {
-
-// 	int h = board->rows, w = board->cols;
-// 	Board::CELL_TYPE *in = board->read;
-// 	Board::CELL_TYPE *out = board->write;
-
-// 	//FastFlow ParallelFor with static scheduling
-//     ParallelFor pf(nW, true);
-
-// 	for (int l = 0; l < numIterations; ++l) {
-
-// 		#if PRINT
-// 			board->print_board(in);
-// 		#endif
-
-// 		pf.parallel_for((long int)1, (long int) h - 1,[&](const long i) {
-
-// 			int sc = i * w + 1;
-// 			int sn = sc - w;
-// 			int ss = sc + w;
-
-// 			#pragma simd //enforces loop vectorization
-// 			#pragma vector nontemporal //because the compiler do not vectorize nested loops
-// 			for (int j = 1; j < w - 1; ++j) {
-
-// 				int count = in[sn-1] +
-// 					in[sn+1] +
-// 					in[ss-1] +
-// 					in[ss+1] +
-// 					in[sc-1] +
-// 					in[sc+1] +
-// 					in[sn] +
-// 					in[ss];
-
-// 				out[sc] = (in[sc]) ? (count == 2 || count == 3) : (count == 3);
-
-// 				sc++;sn++;ss++;
-// 			}
-
-// 			// fix col borders
-// 			out[i * w] = out[i * w + w - 2];
-// 			out[i * w + w - 1] = out[i * w + 1];
-
-// 			// fix row borders
-// 			if (i == 1 || i == h - 2) {
-
-// 				Board::CELL_TYPE *rowSrc = out + w * i;
-// 				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
-
-// 				#pragma simd
-// 				#pragma vector nontemporal
-// 				for (int i = w; i != 0; --i) {
-// 					*rDst++ = *rowSrc++;
-// 				}
-// 			}
-
-//     	}, (long int) nW);
-
-// 		Board::CELL_TYPE *tmp = in;
-// 		in = out;
-// 		out = tmp;
-// 	}
-	
-// 	board->read = in;
-// 	board->write = out;
-// }
 
 #endif //GAMEOFLIFE_TASK_H

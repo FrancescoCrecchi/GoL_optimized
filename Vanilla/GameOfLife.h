@@ -8,7 +8,7 @@
 #include <vector>
 #include <thread>
 
-#include "Board.h"
+#include "../Board.h"
 #include "spinning_barrier.h"
 
 using namespace std;

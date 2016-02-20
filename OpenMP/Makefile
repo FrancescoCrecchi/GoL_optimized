@@ -35,7 +35,7 @@ TARGETS	= GameOfLife
 
 .PHONY: all clean cleanall
 
-GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp Board.h Board.cpp
+GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp ../Board.h ../Board.cpp
 	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(OPENMP) $(OTHERS)
 
 all		: $(TARGETS)

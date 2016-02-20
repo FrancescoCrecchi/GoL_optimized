@@ -5,7 +5,7 @@
 #ifndef GAMEOFLIFE_GAME_BOARD_H
 #define GAMEOFLIFE_GAME_BOARD_H
 
-#include "Board.h"
+#include "../Board.h"
 
 using namespace std;
 

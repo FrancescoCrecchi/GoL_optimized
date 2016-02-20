@@ -3,6 +3,7 @@
 //
 #include "GameOfLife.h"
 #include "task.h"
+#include "../serial.h"
 
 GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
     game_board = new Board(rows, cols, initRandom);
@@ -15,10 +16,10 @@ void GameOfLife::start(int numIterations, int nW) {
     
     if(multithread) {
 
-            ff_task(game_board, numIterations, nW);
+        ff_task(game_board, numIterations, nW);
 
     }
 	else {
-		serial_task(game_board, numIterations);
+		best_serial_task(game_board, numIterations);
 	}
 }

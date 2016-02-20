@@ -4,6 +4,7 @@
 
 #include "GameOfLife.h"
 #include "task.h"
+#include "../serial.h"
 #include <omp.h>
 
 GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
@@ -24,6 +25,6 @@ void GameOfLife::start(int numIterations, int nW) {
         }
     }
 	else {
-		serial_task(game_board, numIterations);
+		best_serial_task(game_board, numIterations);
 	}
 }

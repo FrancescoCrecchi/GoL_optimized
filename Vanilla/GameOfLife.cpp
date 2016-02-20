@@ -3,6 +3,7 @@
 //
 #include "GameOfLife.h"
 #include "task.h"
+#include "../serial.h"
 
 GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
     game_board = new Board(rows, cols, initRandom);
@@ -14,7 +15,7 @@ void GameOfLife::start(int numIterations, int nW) {
 	//Barrier creation
     barrier = new spinning_barrier(nW);
 
-    multithread = (nW != 0);
+    bool multithread = (nW != 0);
     
     if(multithread) {
 
@@ -46,6 +47,6 @@ void GameOfLife::start(int numIterations, int nW) {
 
     }
 	else {
-		plain_task(game_board, 1, game_board->rows - 1, numIterations, NULL);
+		best_serial_task(game_board, numIterations);
 	}
 }
