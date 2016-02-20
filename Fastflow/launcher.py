@@ -153,14 +153,14 @@ def main(argv):
 		cmd = ["./" + exe] + [str(dim), str(nIt), str(nW)]
 		#Running the program and getting the results
 		if mic :
-			cmd = ["ssh", "mic"+str(micN)] + ["export LD_LIBRARY_PATH=/home/spm1520/. ;"] + cmd
+			cmd = ["ssh", "mic"+str(micN)] + cmd
 
 		#Main loop
 		while nW <= maxThreads:
 
 			#Setting the nW parameter
 			if mic :
-				cmd [6] = str(nW)
+				cmd [5] = str(nW)
  			else:
 				cmd[3] = str(nW)
 

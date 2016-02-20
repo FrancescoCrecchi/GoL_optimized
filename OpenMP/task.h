@@ -15,10 +15,6 @@ void serial_task(Board* board, int numIterations) {
 
 	for (int l = 0; l != numIterations; ++l) {
 
-		#if PRINT
-			board->print_board(in);
-		#endif
-
 		for (int i = 1; i < h - 1; ++i) { //going through the rows
 
 			int sc = i * w + 1; 	//current row cell
@@ -64,6 +60,10 @@ void serial_task(Board* board, int numIterations) {
 			*rbottomDst++ = *rtopSrc++;
 		}
 
+		#if PRINT
+			board->print_board(out);
+		#endif
+
 		Board::CELL_TYPE *tmp = in;
 		in = out;
 		out = tmp;
@@ -81,13 +81,6 @@ void omp_task(Board* board, int numIterations) {
 	Board::CELL_TYPE *out = board->write;
 
 	for (int l = 0; l < numIterations; ++l) {
-
-		#if PRINT
-		#pragma omp single
-		{
-			board->print_board(in);
-		}
-		#endif
 
 		#pragma omp for schedule(static)
 		for (int i = 1; i < h - 1; ++i) {
@@ -131,6 +124,13 @@ void omp_task(Board* board, int numIterations) {
 				}
 			}
 		}
+
+		#if PRINT
+		#pragma omp single
+		{
+			board->print_board(out);
+		}
+		#endif
 
 		Board::CELL_TYPE *tmp = in;
 		in = out;

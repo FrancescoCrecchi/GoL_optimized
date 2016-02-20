@@ -33,6 +33,8 @@ CXX = icpc
 
 CXXFLAGS = -std=c++11
 
+VECTFLAGS = -vec-report=3
+
 OPTFLAGS = -O3 -finline-functions -DNDEBUG
 
 MULTITHREAD = -pthread
@@ -44,10 +46,10 @@ TARGETS	= GameOfLife
 .PHONY: all clean cleanall
 
 GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp Board.h Board.cpp
-	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(INCLUDES) $(MULTITHREAD) $(OTHERS)
+	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(INCLUDES) $(MULTITHREAD) $(OTHERS) #$(VECTFLAGS)
 
 all		: $(TARGETS)
 clean		: 
 	rm -f $(TARGETS)
 cleanall	: clean
-	\rm -f *.o *~
+	\rm -f *.o *~ *.optrpt
