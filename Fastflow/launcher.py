@@ -24,7 +24,7 @@ threshold = 32 #doubling worker threshold
 mic = False #does the test is running on mic?
 micN = -1
 
-vectorized = False #does task uses vectorization?
+vectorization = False #does task uses vectorization?
 
 #GameOfLife default vars
 dim = 1024

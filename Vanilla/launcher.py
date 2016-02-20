@@ -24,7 +24,7 @@ threshold = 32 #doubling worker threshold
 mic = False #does the test is running on mic?
 micN = -1
 
-vectorized = False #does task uses vectorization?
+vectorization = False #does task uses vectorization?
 
 #GameOfLife default vars
 dim = 1024
@@ -155,7 +155,7 @@ def main(argv):
 		fout.write("# \t-dim = " + str(dim) + "\n")
 		fout.write("# \t-nIter = " + str(nIt) +"\n")
 		if vectorization:
-			fout.write("# \t-vectorized" + "\n")
+			fout.write("# \t-VECTORIZED" + "\n")
 
 		fout.write("# Test vars:\n")
 		fout.write("# \t-maxThreads = " + str(maxThreads) + "\n")
