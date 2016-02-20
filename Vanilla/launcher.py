@@ -24,6 +24,8 @@ threshold = 32 #doubling worker threshold
 mic = False #does the test is running on mic?
 micN = -1
 
+vectorized = False #does task uses vectorization?
+
 #GameOfLife default vars
 dim = 1024
 nIt = 1000
@@ -45,19 +47,19 @@ def AVG(times):
 	return sum(times) / float(len(times))
 
 def usage():
-	print "python launcher.py [-h] -d boardDim -n numIter --maxThreads N --nRuns testsPerConfig --step s --threshold t [--mic 0/1]"
+	print "python launcher.py [-h] -d boardDim -n numIter --maxThreads N --nRuns testsPerConfig --step s --threshold t [--mic 0/1] --vect"
 
 def main(argv):
 
 	try:
-		opts, args = getopt.getopt(argv,"hd:n:",["maxThreads=","nRuns=", "step=", "threshold=", "mic="])
+		opts, args = getopt.getopt(argv,"hd:n:",["maxThreads=","nRuns=", "step=", "threshold=", "mic=", "vect"])
 	except getopt.GetoptError as err:
 		 # print help information and exit:
 		 print str(err) # will print something like "option -a not recognized"
 		 usage()
 		 sys.exit(2)
 
-	global dim, nIt, maxThreads, runs, mic, outputFileName, Tseq, T_1, Speedup_n, Scalability_n, Efficiency_n, step, threshold
+	global dim, nIt, maxThreads, runs, mic, outputFileName, Tseq, T_1, Speedup_n, Scalability_n, Efficiency_n, step, threshold, vectorization
 
 	for o, a in opts:
 	 	if o == "-h":
@@ -78,6 +80,8 @@ def main(argv):
 		elif o == "--mic":
 			mic = True
 			micN = int(a)
+		elif o == "--vect":
+			vectorization = True
 		else:
 			print str(err) # will print something like "option -a not recognized"
 		 	usage()
@@ -95,11 +99,16 @@ def main(argv):
 	#Then..
 	cmd = ["make"]
 	exe = "GameOfLife"
+	others = "OTHERS="
+
+	#Vectorization
+	if vectorization:
+		others = others + "-DVECT "
 
 	#Mic case
 	if mic :
-
-		cmd = cmd + [exe] + ["OTHERS=-mmic -DNO_DEFAULT_MAPPING"]
+		others = others + "-mmic -DNO_DEFAULT_MAPPING"
+		cmd = cmd + [exe] + [others]
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 		out, err = p.communicate()
 		# assert err == ""
@@ -112,6 +121,8 @@ def main(argv):
 		print err
 
 	else:
+		if vectorization:
+			cmd = cmd + [others]
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 		out, err = p.communicate()
 		#assert err == ""
@@ -134,7 +145,7 @@ def main(argv):
 
 		msg = "# Running on "
 		if mic:
-			msg = msg + "mic"	
+			msg = msg + "mic " + str(micN)	
 		else :
 			msg = msg + "host"
 
@@ -143,6 +154,8 @@ def main(argv):
 		fout.write("# GameOfLife vars: \n")
 		fout.write("# \t-dim = " + str(dim) + "\n")
 		fout.write("# \t-nIter = " + str(nIt) +"\n")
+		if vectorization:
+			fout.write("# \t-vectorized" + "\n")
 
 		fout.write("# Test vars:\n")
 		fout.write("# \t-maxThreads = " + str(maxThreads) + "\n")
@@ -191,6 +204,11 @@ def main(argv):
 				#Sequential version of the program
 				Tseq = avg_t
 				nW = nW + 1
+
+				Speedup_n.append((nW, 0))
+				Efficiency_n.append((nW, 1))
+				Scalability_n.append((nW, 0))
+
 			else:
 				#Calculate sp(n) & eff(n)
 				sp_n = Tseq/avg_t

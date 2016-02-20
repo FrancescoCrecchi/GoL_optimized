@@ -93,8 +93,10 @@ void ff_task(Board* board, int numIterations, int nW) {
 			int sn = sc - w;
 			int ss = sc + w;
 
+#if VECT
 			#pragma simd //enforces loop vectorization
 			#pragma vector nontemporal //because the compiler do not vectorize nested loops
+#endif
 			for (int j = 1; j < w - 1; ++j) {
 
 				int count = in[sn-1] +
@@ -121,8 +123,10 @@ void ff_task(Board* board, int numIterations, int nW) {
 				Board::CELL_TYPE *rowSrc = out + w * i;
 				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
 
+#if VECT
 				#pragma simd
 				#pragma vector nontemporal
+#endif
 				for (int i = w; i != 0; --i) {
 					*rDst++ = *rowSrc++;
 				}

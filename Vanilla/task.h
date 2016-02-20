@@ -25,7 +25,11 @@ void plain_task(Board* board, int start, int stop, int numIterations, spinning_b
 			int sn = sc - w; 		//previous row cell
 			int ss = sc + w;		//next row cell
 
-			for (int j = 1; j < w - 1; ++j) { //going through the cols
+#if VECT
+			#pragma simd //enforces loop vectorization
+			#pragma vector nontemporal //because the compiler do not vectorize nested loops
+#endif
+			for (int j = 1; j < w - 1; ++j) {
 
 				int count = in[sn - 1] +
 					in[sn + 1] +
@@ -45,54 +49,36 @@ void plain_task(Board* board, int start, int stop, int numIterations, spinning_b
 			out[i * w] = out[i * w + w - 2];
 			out[i * w + w - 1] = out[i * w + 1];
 
+			// fix row borders
+			if (i == 1 || i == h - 2) {
+
+				Board::CELL_TYPE *rowSrc = out + w * i;
+				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
+
+#if VECT
+				#pragma simd
+				#pragma vector nontemporal
+#endif
+				for (int i = w; i != 0; --i) {
+					*rDst++ = *rowSrc++;
+				}
+			}
+
 		}
 
 		if(multithread) {
 			//Barrier here
 			barrier->wait([&](){
-				// fix row borders
-				int lastRowOff = w * (h - 1);
-				int lastRowOff0 = w * (h - 2);
-				int firstRowOff0 = w;
-
-				Board::CELL_TYPE *rtopDst = out;
-				Board::CELL_TYPE *rbottomDst = out + lastRowOff;
-				Board::CELL_TYPE *rbottomSrc = out + lastRowOff0;
-				Board::CELL_TYPE *rtopSrc = out + firstRowOff0;
-
-				// rows
-				for (int i = w; i != 0; --i) {
-					*rtopDst++ = *rbottomSrc++;
-					*rbottomDst++ = *rtopSrc++;
-				}
-
-				#if PRINT
-					board->print_board(out);
-				#endif
-
+#if PRINT
+				board->print_board(out);
+#endif
 			});
 		}
 		else
 		{
-			// fix row borders
-			int lastRowOff = w * (h - 1);
-			int lastRowOff0 = w * (h - 2);
-			int firstRowOff0 = w;
-
-			Board::CELL_TYPE *rtopDst = out;
-			Board::CELL_TYPE *rbottomDst = out + lastRowOff;
-			Board::CELL_TYPE *rbottomSrc = out + lastRowOff0;
-			Board::CELL_TYPE *rtopSrc = out + firstRowOff0;
-
-			// rows
-			for (int i = w; i != 0; --i) {
-				*rtopDst++ = *rbottomSrc++;
-				*rbottomDst++ = *rtopSrc++;
-			}
-
-			#if PRINT
-					board->print_board(out);
-			#endif
+#if PRINT
+			board->print_board(out);
+#endif
 		}
 
 		Board::CELL_TYPE *tmp = in;
