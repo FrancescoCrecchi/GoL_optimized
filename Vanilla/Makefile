@@ -35,9 +35,11 @@ MULTITHREAD = -pthread
 
 TARGETS	= GameOfLife
 
+OTHERS += -lboost_thread-mt
+
 .PHONY: all clean cleanall
 
-GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp ../Board.h ../Board.cpp spinning_barrier.h spinning_barrier.cpp
+GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp ../Board.h ../Board.cpp ../spinning_barrier.h ../spinning_barrier.cpp
 	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(MULTITHREAD) $(OTHERS) #$(VECTFLAGS)
 
 all		: $(TARGETS)

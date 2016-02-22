@@ -13,40 +13,44 @@ GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
 void GameOfLife::start(int numIterations, int nW) {
 
 	//Barrier creation
-    barrier = new spinning_barrier(nW);
+    // barrier = new spinning_barrier(nW);
+    barrier = new boost::barrier(nW);
 
     bool multithread = (nW != 0);
     
     if(multithread) {
 
-        //Reserving space for the thread_pool
+        // Reserving space for the thread_pool
         thread_pool.reserve(nW);
 
         //Split work among workers in the thread_pool
         int howmuch = (game_board->rows - 2) / nW;
 
-        int start = 0;
-        int stop = 1;
+        //int start = 0;
+        int stop = 0;
 
-        for (int i = 0; i < nW - 1; ++i)
+        for (int i = 0; i < nW ; ++i)
         {
-            start = i*howmuch + 1;
+            auto start = i*howmuch + 1;
+            
+	    if ( i  < nW - 2 ) //not last thread
             stop  = start+howmuch;
+	    else
+            stop = game_board->rows - 1;
 
             //Set up worker[i]
-            this->thread_pool.emplace_back(thread(plain_task, game_board, start, stop, numIterations, barrier));
+            // this->thread_pool.emplace_back(thread(plain_task, game_board, start, stop, numIterations, barrier));
+            this->thread_pool.emplace_back(boost::thread(boost_task, game_board, start, stop, numIterations, barrier));
         }
-        //Using also the main thread
-        plain_task(game_board, stop , game_board->rows - 1,  numIterations, barrier);
 
-        //Thread join and swap
-        for (int i = 0; i < nW - 1; ++i){
+        //Thread join
+        for (int i = 0; i < nW; ++i){
             this->thread_pool[i].join();
         }
         this->thread_pool.clear();
 
     }
 	else {
-		best_serial_task(game_board, numIterations);
+		/*best_*/serial_task(game_board, numIterations);
 	}
 }

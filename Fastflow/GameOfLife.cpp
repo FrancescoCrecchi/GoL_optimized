@@ -12,14 +12,14 @@ GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
 //MAIN METHOD: evaluate the board for a 'numIterations'
 void GameOfLife::start(int numIterations, int nW) {
 
-    bool multithread = (nW != 0);
+        bool multithread = (nW != 0);
     
-    if(multithread) {
+    	if(multithread) {
 
-        ff_task(game_board, numIterations, nW);
+        	ff_task(game_board, numIterations, nW);
 
-    }
+    	}
 	else {
-		best_serial_task(game_board, numIterations);
+		/*best_*/serial_task(game_board, numIterations);
 	}
 }

@@ -7,7 +7,7 @@
 
 #include "../Board.h"
 
-void omp_task(Board* board, int numIterations) {
+void omp_task(Board* board, int numIterations, int nW) {
 
 	int h = board->rows, w = board->cols;
 	Board::CELL_TYPE *in = board->read;
@@ -15,15 +15,15 @@ void omp_task(Board* board, int numIterations) {
 
 	for (int l = 0; l < numIterations; ++l) {
 
-		#pragma omp for schedule(static)
+		#pragma omp parallel for num_threads(nW) schedule(static)
 		for (int i = 1; i < h - 1; ++i) {
 
 			int sc = i * w + 1;
 			int sn = sc - w;
 			int ss = sc + w;
 
-			#pragma simd //enforces loop vectorization
-			#pragma vector nontemporal //because the compiler do not vectorize nested loops
+			// #pragma simd //enforces loop vectorization
+			// #pragma vector nontemporal //because the compiler do not vectorize nested loops
 			for (int j = 1; j < w - 1; ++j) {
 
 				int count = in[sn-1] +
@@ -50,8 +50,8 @@ void omp_task(Board* board, int numIterations) {
 				Board::CELL_TYPE *rowSrc = out + w * i;
 				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
 
-				#pragma simd
-				#pragma vector nontemporal
+				// #pragma simd
+				// #pragma vector nontemporal
 				for (int i = w; i != 0; --i) {
 					*rDst++ = *rowSrc++;
 				}
@@ -59,10 +59,10 @@ void omp_task(Board* board, int numIterations) {
 		}
 
 		#if PRINT
-		#pragma omp single
-		{
+		// #pragma omp single
+		// {
 			board->print_board(out);
-		}
+		// }
 		#endif
 
 		Board::CELL_TYPE *tmp = in;
@@ -71,11 +71,11 @@ void omp_task(Board* board, int numIterations) {
 	}
 
 
-#pragma omp single 
-	{
+// #pragma omp single 
+	// {
 		board->read = in;
 		board->write = out;
-	}
+	// }
 
 }
 

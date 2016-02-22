@@ -24,8 +24,6 @@ threshold = 32 #doubling worker threshold
 mic = False #does the test is running on mic?
 micN = -1
 
-vectorization = False #does task uses vectorization?
-
 #GameOfLife default vars
 dim = 1024
 nIt = 1000
@@ -47,19 +45,19 @@ def AVG(times):
 	return sum(times) / float(len(times))
 
 def usage():
-	print "python launcher.py [-h] -d boardDim -n numIter --maxThreads N --nRuns testsPerConfig --step s --threshold t [--mic 0/1] --vect"
+	print "python launcher.py [-h] -d boardDim -n numIter --maxThreads N --nRuns testsPerConfig --step s --threshold t [--mic 0/1]"
 
 def main(argv):
 
 	try:
-		opts, args = getopt.getopt(argv,"hd:n:",["maxThreads=","nRuns=", "step=", "threshold=", "mic=", "vect"])
+		opts, args = getopt.getopt(argv,"hd:n:",["maxThreads=","nRuns=", "step=", "threshold=", "mic="])
 	except getopt.GetoptError as err:
 		 # print help information and exit:
 		 print str(err) # will print something like "option -a not recognized"
 		 usage()
 		 sys.exit(2)
 
-	global dim, nIt, maxThreads, runs, mic, outputFileName, Tseq, T_1, Speedup_n, Scalability_n, Efficiency_n, step, threshold, vectorization
+	global dim, nIt, maxThreads, runs, mic, outputFileName, Tseq, T_1, Speedup_n, Scalability_n, Efficiency_n, step, threshold
 
 	for o, a in opts:
 	 	if o == "-h":
@@ -80,11 +78,9 @@ def main(argv):
 		elif o == "--mic":
 			mic = True
 			micN = int(a)
-		elif o == "--vect":
-			vectorization = True
 		else:
 			print str(err) # will print something like "option -a not recognized"
-		 	usage()
+		     	usage()
 		 	sys.exit(2)
 
 	#Compile invoking the right target architecture
@@ -100,10 +96,6 @@ def main(argv):
 	cmd = ["make"]
 	exe = "GameOfLife"
 	others = "OTHERS="
-
-	#Vectorization
-	if vectorization:
-		others = others + "-DVECT "
 
 	#Mic case
 	if mic :
@@ -121,8 +113,6 @@ def main(argv):
 		print err
 
 	else:
-		if vectorization:
-			cmd = cmd + [others]
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 		out, err = p.communicate()
 		#assert err == ""
@@ -154,9 +144,6 @@ def main(argv):
 		fout.write("# GameOfLife vars: \n")
 		fout.write("# \t-dim = " + str(dim) + "\n")
 		fout.write("# \t-nIter = " + str(nIt) +"\n")
-		if vectorization:
-			fout.write("# \t-vectorized" + "\n")
-
 		fout.write("# Test vars:\n")
 		fout.write("# \t-maxThreads = " + str(maxThreads) + "\n")
 		fout.write("# \t-runs = " + str(runs) + "\n")

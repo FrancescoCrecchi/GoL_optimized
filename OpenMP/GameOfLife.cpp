@@ -19,12 +19,12 @@ void GameOfLife::start(int numIterations, int nW) {
     if(multithread) {
 		//kmp_set_defaults("KMP_AFFINITY=compact");
 
-#pragma omp parallel num_threads(nW)
-        {
-            omp_task(game_board, numIterations);
-        }
+// #pragma omp parallel num_threads(nW)
+        // {
+            omp_task(game_board, numIterations, nW);
+        // }
     }
 	else {
-		best_serial_task(game_board, numIterations);
+		/*best_*/serial_task(game_board, numIterations);
 	}
 }
