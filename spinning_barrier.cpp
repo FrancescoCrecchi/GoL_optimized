@@ -12,9 +12,6 @@ void spinning_barrier::wait (function<void()> callback) {
 
     if (nwait_.fetch_add (1) < n_ - 1)
     {
-        if(nwait_.load() == 1)
-            start = chrono::system_clock::now();
-
         while (step_.load () == step) /* Run in circles and scream like a little girl.  */
             ;
     }
@@ -23,10 +20,7 @@ void spinning_barrier::wait (function<void()> callback) {
         //Execute callback
         callback();
 
-        nwait_.store (0); // XXX: maybe can use relaxed ordering here ??
+        nwait_.store (0);
         step_.fetch_add (1);
-        end = chrono::system_clock::now();
-        auto elapsed = chrono::duration_cast<chrono::milliseconds> (end - start).count();
-        total_time_barrier += elapsed;
     }
 }

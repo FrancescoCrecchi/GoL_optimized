@@ -46,9 +46,6 @@ void GameOfLife::start(int numIterations, int nW) {
             this->thread_pool[i].join();
         }
         this->thread_pool.clear();
-
-        //DEBUG!
-        // cout << "Barrier time: " << barrier->total_time_barrier << endl;
     }
 	else {
 		best_serial_task(game_board, numIterations);
