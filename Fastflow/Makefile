@@ -27,13 +27,11 @@
 # FF_ROOT     pointing to the FastFlow root directory (i.e.
 #             the one containing the ff directory).
 
-FF_ROOT = $(HOME)/fastflow
+FF_ROOT = /home/spm1501/public/fastflow
 
 CXX = icpc
 
 CXXFLAGS = -std=c++11
-
-VECTFLAGS = -vec-report=3
 
 OPTFLAGS = -O3 -finline-functions -DNDEBUG
 
@@ -46,7 +44,7 @@ TARGETS	= GameOfLife
 .PHONY: all clean cleanall
 
 GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp ../Board.h ../Board.cpp
-	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(INCLUDES) $(MULTITHREAD) $(OTHERS) #$(VECTFLAGS)
+	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(INCLUDES) $(MULTITHREAD) $(OTHERS)
 
 all		: $(TARGETS)
 clean		: 

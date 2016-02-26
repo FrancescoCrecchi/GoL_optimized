@@ -6,7 +6,7 @@
 #define GAMEOFLIFE_TASK_H
 
 #include "../Board.h"
-#include "../spinning_barrier.h"
+#include "spinning_barrier.h"
 
 // int8_t _lifeLogic[2][9] = {
 // 	{0, 0, 0, 1, 0, 0, 0, 0, 0},
