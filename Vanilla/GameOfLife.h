@@ -8,19 +8,14 @@
 #include <vector>
 #include <thread>
 
-#include <boost/thread.hpp>
-// #include <boost/thread/barrier.hpp>
-
 #include "../Board.h"
 #include "../spinning_barrier.h"
 
 using namespace std;
 
 class GameOfLife {
-	// vector<thread> thread_pool;
- //    spinning_barrier* barrier;
-	std::vector<boost::thread> thread_pool;
-	boost::barrier* barrier;
+	vector<thread> thread_pool;
+    spinning_barrier* barrier;
 
 public:
     Board* game_board;

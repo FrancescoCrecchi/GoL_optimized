@@ -10,7 +10,10 @@
 
 using namespace ff;
 
-const int CHUNK_SIZE = 0; //if zero -> maximal chunk size
+// int8_t _lifeLogic[2][9] = {
+// 	{0, 0, 0, 1, 0, 0, 0, 0, 0},
+// 	{0, 0, 1, 1, 0, 0, 0, 0, 0}
+// };
 
 void ff_task(Board* board, int numIterations, int nW) {
 
@@ -19,16 +22,11 @@ void ff_task(Board* board, int numIterations, int nW) {
 	Board::CELL_TYPE *out = board->write;
 
 	//FastFlow ParallelFor with static scheduling
-    ParallelFor pf;
+    ParallelFor pf (nW, true);
 
 	for (int l = 0; l < numIterations; ++l) {
 
-		pf.parallel_for_idx((long int)1, (long int) h - 1, 1, CHUNK_SIZE, [&](const long start_idx, const long stop_idx, const int thid) {
-
-			// cerr << "[" << start_idx << ", " << stop_idx << "]" << endl;
-			// cerr.flush();
-
-			for (int i = start_idx; i < stop_idx; ++i) { //going through the rows
+		pf.parallel_for((long int)1, (long int) h - 1,[&](const long i) {
 				
 				int sc = i * w + 1;
 				int sn = sc - w;
@@ -48,6 +46,7 @@ void ff_task(Board* board, int numIterations, int nW) {
 						in[ss];
 
 					out[sc] = (in[sc]) ? (count == 2 || count == 3) : (count == 3);
+					// out[sc] = _lifeLogic [in[sc]][count];	
 
 					sc++;sn++;ss++;
 				}
@@ -62,18 +61,17 @@ void ff_task(Board* board, int numIterations, int nW) {
 					Board::CELL_TYPE *rowSrc = out + w * i;
 					Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
 
-					// #pragma simd
-					// #pragma vector nontemporal
+					#pragma simd
+					#pragma vector nontemporal
 					for (int i = w; i != 0; --i) {
 						*rDst++ = *rowSrc++;
 					}
 				}
-			}
 
     	}, (long int) nW);
 
 #if PRINT
-			board->print_board(out);
+		board->print_board(out);
 #endif
 
 		Board::CELL_TYPE *tmp = in;

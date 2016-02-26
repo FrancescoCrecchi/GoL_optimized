@@ -103,20 +103,17 @@ def main(argv):
 		cmd = cmd + [exe] + [others]
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 		out, err = p.communicate()
-		# assert err == ""
-		print err
+		assert err == ""
 
 		cmd = ["scp", exe, "mic" + str(micN) + ":"]
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 		out, err = p.communicate()
-		#assert err == ""
-		print err
+		assert err == ""
 
 	else:
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 		out, err = p.communicate()
-		#assert err == ""
-		print err
+		assert err == ""
 
 	# Create dir (if any)
 	if not os.path.exists(directory):

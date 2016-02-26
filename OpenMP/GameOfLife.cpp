@@ -25,6 +25,6 @@ void GameOfLife::start(int numIterations, int nW) {
         // }
     }
 	else {
-		/*best_*/serial_task(game_board, numIterations);
+		best_serial_task(game_board, numIterations);
 	}
 }

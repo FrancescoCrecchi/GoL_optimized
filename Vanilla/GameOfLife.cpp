@@ -13,8 +13,7 @@ GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
 void GameOfLife::start(int numIterations, int nW) {
 
 	//Barrier creation
-    // barrier = new spinning_barrier(nW);
-    barrier = new boost::barrier(nW);
+    barrier = new spinning_barrier(nW);
 
     bool multithread = (nW != 0);
     
@@ -33,14 +32,13 @@ void GameOfLife::start(int numIterations, int nW) {
         {
             auto start = i*howmuch + 1;
             
-	    if ( i  < nW - 2 ) //not last thread
-            stop  = start+howmuch;
-	    else
-            stop = game_board->rows - 1;
+    	    if (i  != (nW - 1)) //not last thread
+                stop  = start+howmuch;
+    	    else
+                stop = game_board->rows - 1;
 
             //Set up worker[i]
-            // this->thread_pool.emplace_back(thread(plain_task, game_board, start, stop, numIterations, barrier));
-            this->thread_pool.emplace_back(boost::thread(boost_task, game_board, start, stop, numIterations, barrier));
+            this->thread_pool.emplace_back(thread(plain_task, game_board, start, stop, numIterations, barrier));
         }
 
         //Thread join
@@ -49,8 +47,10 @@ void GameOfLife::start(int numIterations, int nW) {
         }
         this->thread_pool.clear();
 
+        //DEBUG!
+        // cout << "Barrier time: " << barrier->total_time_barrier << endl;
     }
 	else {
-		/*best_*/serial_task(game_board, numIterations);
+		best_serial_task(game_board, numIterations);
 	}
 }

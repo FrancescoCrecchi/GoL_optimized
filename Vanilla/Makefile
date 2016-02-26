@@ -27,7 +27,7 @@ CXX = icpc
 
 CXXFLAGS = -std=c++11
 
-VECTFLAGS = -vec-report=3
+# VECTFLAGS = -vec-report=3
 
 OPTFLAGS = -O3 -finline-functions -DNDEBUG
 
@@ -35,12 +35,12 @@ MULTITHREAD = -pthread
 
 TARGETS	= GameOfLife
 
-OTHERS += -lboost_thread-mt
+# OTHERS += -lboost_thread-mt
 
 .PHONY: all clean cleanall
 
 GameOfLife: main.cpp GameOfLife.h GameOfLife.cpp ../Board.h ../Board.cpp ../spinning_barrier.h ../spinning_barrier.cpp
-	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(MULTITHREAD) $(OTHERS) #$(VECTFLAGS)
+	$(CXX) $(OPTFLAGS) $^ $(CXXFLAGS) -o $@ $(MULTITHREAD) $(OTHERS) $(VECTFLAGS)
 
 all		: $(TARGETS)
 clean		: 

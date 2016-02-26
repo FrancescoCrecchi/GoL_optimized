@@ -7,6 +7,11 @@
 
 #include "../Board.h"
 
+// int8_t _lifeLogic[2][9] = {
+// 	{0, 0, 0, 1, 0, 0, 0, 0, 0},
+// 	{0, 0, 1, 1, 0, 0, 0, 0, 0}
+// };
+
 void omp_task(Board* board, int numIterations, int nW) {
 
 	int h = board->rows, w = board->cols;
@@ -22,8 +27,8 @@ void omp_task(Board* board, int numIterations, int nW) {
 			int sn = sc - w;
 			int ss = sc + w;
 
-			// #pragma simd //enforces loop vectorization
-			// #pragma vector nontemporal //because the compiler do not vectorize nested loops
+			#pragma simd //enforces loop vectorization
+			#pragma vector nontemporal //because the compiler do not vectorize nested loops
 			for (int j = 1; j < w - 1; ++j) {
 
 				int count = in[sn-1] +
@@ -36,6 +41,7 @@ void omp_task(Board* board, int numIterations, int nW) {
 					in[ss];
 
 				out[sc] = (in[sc]) ? (count == 2 || count == 3) : (count == 3);
+				// out[sc] = _lifeLogic [in[sc]][count];
 
 				sc++;sn++;ss++;
 			}
@@ -50,8 +56,8 @@ void omp_task(Board* board, int numIterations, int nW) {
 				Board::CELL_TYPE *rowSrc = out + w * i;
 				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
 
-				// #pragma simd
-				// #pragma vector nontemporal
+				#pragma simd
+				#pragma vector nontemporal
 				for (int i = w; i != 0; --i) {
 					*rDst++ = *rowSrc++;
 				}
@@ -59,10 +65,10 @@ void omp_task(Board* board, int numIterations, int nW) {
 		}
 
 		#if PRINT
-		// #pragma omp single
-		// {
+		#pragma omp single
+		{
 			board->print_board(out);
-		// }
+		}
 		#endif
 
 		Board::CELL_TYPE *tmp = in;

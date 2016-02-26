@@ -7,10 +7,14 @@
 
 #include <atomic>
 #include <functional>
+#include <chrono>
+#include <iostream>
 
 using namespace std;
 
 class spinning_barrier {
+    chrono::system_clock::time_point start, end;
+
 protected:
     /* Number of synchronized threads. */
     const unsigned int n_;
@@ -22,7 +26,7 @@ protected:
      * it's OK to wrap.  */
     std::atomic<unsigned int> step_;
 public:
-//    int total_time_barrier = 0;
+   int total_time_barrier = 0;
 
     spinning_barrier (unsigned int n);
     void wait (function<void()> callback);

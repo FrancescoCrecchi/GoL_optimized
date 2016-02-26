@@ -42,4 +42,4 @@ all		: $(TARGETS)
 clean		: 
 	rm -f $(TARGETS)
 cleanall	: clean
-	\rm -f *.o *~
+	\rm -f *.o *~ *.optrpt
