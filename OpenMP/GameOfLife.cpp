@@ -11,18 +11,17 @@ GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
     game_board = new Board(rows, cols, initRandom);
 }
 
+GameOfLife::~GameOfLife() {
+    delete game_board;
+}
+
 //MAIN METHOD: evaluate the board for a 'numIterations'
 void GameOfLife::start(int numIterations, int nW) {
 
-    auto multithread = (nW != 0);
+    bool multithread = (nW != 0);
     
     if(multithread) {
-		//kmp_set_defaults("KMP_AFFINITY=compact");
-
-// #pragma omp parallel num_threads(nW)
-        // {
-            omp_task(game_board, numIterations, nW);
-        // }
+        omp_task(game_board, numIterations, nW);
     }
 	else {
 		best_serial_task(game_board, numIterations);

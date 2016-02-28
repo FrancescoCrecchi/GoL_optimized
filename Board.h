@@ -17,6 +17,7 @@ public:
 
 
     Board(int rows, int cols, bool initRandom);
+    ~Board();
 
     int get_cell(int c);
     void set_cell(int c, int value);

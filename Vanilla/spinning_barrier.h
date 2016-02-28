@@ -20,8 +20,7 @@ protected:
     /* Number of threads currently spinning.  */
     std::atomic<unsigned int> nwait_;
 
-    /* Number of barrier syncronizations completed so far,
-     * it's OK to wrap.  */
+    /* Number of barrier syncronizations completed so far */
     std::atomic<unsigned int> step_;
 public:
     spinning_barrier (unsigned int n);

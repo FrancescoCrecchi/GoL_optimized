@@ -21,6 +21,13 @@ Board::Board(int rows, int cols, bool initRandom) {
     initialize_board(initRandom);
 }
 
+Board::~Board() {
+    //Deallocate boards
+    _mm_free(read);
+    _mm_free(write);
+}
+
+
 void Board::initialize_board(bool initRandom) {
     //initialize each element randomly
     srand(SEED);

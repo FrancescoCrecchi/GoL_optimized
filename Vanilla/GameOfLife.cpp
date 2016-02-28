@@ -9,6 +9,11 @@ GameOfLife::GameOfLife(int rows, int cols, bool initRandom) {
     game_board = new Board(rows, cols, initRandom);
 }
 
+GameOfLife::~GameOfLife() {
+    delete game_board;
+    delete barrier;
+}
+
 //MAIN METHOD: evaluate the board for a 'numIterations'
 void GameOfLife::start(int numIterations, int nW) {
 

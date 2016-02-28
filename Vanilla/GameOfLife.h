@@ -21,6 +21,8 @@ public:
     Board* game_board;
 
     GameOfLife(int rows, int cols, bool initRandom); //Create a new GameBoard and initialize it randomly
+    ~GameOfLife();
+
     void start(int numIterations, int nW);
 };
 
