@@ -39,5 +39,7 @@ int main(int argc, char* argv[]) {
     auto elapsed = chrono::duration_cast<chrono::milliseconds> (end - start).count();
     cout << elapsed << endl;
 
+    delete GoL;
+
     return 0;
 }
