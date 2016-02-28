@@ -50,9 +50,9 @@ void serial_task(Board* board, int numIterations) {
 			*rbottomDst++ = *rtopSrc++;
 		}
 
-		#if PRINT
+#if PRINT
 			board->print_board(out);
-		#endif
+#endif
 
 		Board::CELL_TYPE *tmp = in;
 		in = out;
@@ -80,7 +80,6 @@ void best_serial_task(Board* board, int numIterations) {
 			int ss = sc + w;		//next row cell
 
 			#pragma simd //enforces loop vectorization
-			#pragma vector nontemporal //because the compiler do not vectorize nested loops
 			for (int j = 1; j < w - 1; ++j) {
 
 				int count = in[sn - 1] +
@@ -108,7 +107,6 @@ void best_serial_task(Board* board, int numIterations) {
 				Board::CELL_TYPE *rDst = out + w * ((i == 1) ? (h - 1) : 0);
 
 				#pragma simd
-				#pragma vector nontemporal
 				for (int i = w; i != 0; --i) {
 					*rDst++ = *rowSrc++;
 				}
